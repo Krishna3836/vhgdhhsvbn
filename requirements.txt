@@ -1,0 +1,15 @@
+pyromod==1.5
+pyrogram
+tgcrypto
+requests
+hachoir
+pytz
+hachoir
+ffmpeg-python
+PyDrive2
+xmltodict
+hachoir
+lxml
+pywidevine
+telegraph
+python-dateutil
