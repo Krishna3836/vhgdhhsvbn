@@ -2,7 +2,7 @@ import os
 import time
 from bot.helpers.utils import humanbytes, get_duration, get_thumbnail, progress_for_pyrogram
 
-from main import BOT as appl
+from bot.__main__ import USERBOT as appl
 
 class tgUploader:
     def __init__(self, appl, msg):
