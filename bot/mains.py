@@ -26,10 +26,54 @@ from bot.services.tplay.api import TPLAY_API
 from bot.helpers.utils import post_to_telegraph
 import datetime
 import logging
-from pyrogram import Client as app
+from pyrogram import Client
+import pyromod
+from pyromod import listen
+
+logger = logging.getLogger(__name__)
+
+loop = asyncio.get_event_loop()
 
 
 LOGGER = logging.getLogger(__name__)
+
+
+
+import nest_asyncio
+
+
+nest_asyncio.apply()
+
+logging.basicConfig(
+    level=logging.INFO,
+    handlers=[logging.FileHandler("log.txt"), logging.StreamHandler()],
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+logger = logging.getLogger(__name__)
+logging.getLogger("pyrogram").setLevel(logging.WARNING)
+
+
+app = Client(
+    name=TG_CONFIG.session_name,
+    api_id=TG_CONFIG.api_id,
+    api_hash=TG_CONFIG.api_hash,
+    bot_token=TG_CONFIG.bot_token,
+    
+)
+
+if TG_CONFIG.stringhi:
+    USERBOT = Client(
+        "cmuserbot",
+        session_string=TG_CONFIG.stringhi,
+        api_id=TG_CONFIG.api_id,
+        api_hash=TG_CONFIG.api_hash,
+    )
+else:
+    USERBOT = None
+
+Start_Time = time.time()
+
+
 
 @app.on_message(filters.chat(TG_CONFIG.sudo_users) & filters.command('gdrive'))
 async def gdrive_helper(_, message):
@@ -120,5 +164,41 @@ async def start_cmd_handler(app, message):
 
 
 
+def booted(bot):
+    chats = TG_CONFIG.sudo_users
+
+    try:
+        logger.info(f"Added Counting")
+    except Exception as e:
+        logger.info(f"Main Error: {e}")
+
+    for i in chats:
+        try:
+            bot.send_message(i, "The Bot is Restarted Now")
+        except Exception:
+            logger.info(f"Not found id {i}")
 
 
+def start_bots():
+    print("Processing.....")
+    try:
+        app.start()
+        logger.info(f"Bot is Running....")
+    except Exception as e:
+        logger.info(f"Bot Error: {e}")
+
+    if TG_CONFIG.stringhi:
+        try:
+            USERBOT.start()
+            logger.info(f"UserBot is Running...")
+        except Exception as e:
+            logger.info(f"UserBot Error: {e}")
+
+    booted(app)
+    idle()
+
+if __name__ == "__main__":
+    try:
+        loop.run_until_complete(start_bots())
+    except KeyboardInterrupt:
+        logger.info(f"Bots Stopped!! Problem in runloop")
